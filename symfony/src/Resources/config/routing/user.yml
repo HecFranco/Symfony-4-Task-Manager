@@ -1,0 +1,8 @@
+user_new:
+    path: /new
+    controller: App\Controller\UserController::new
+    methods:   [POST]
+user_edit:
+    path: /edit
+    controller: App\Controller\UserController::edit
+    methods:   [POST]

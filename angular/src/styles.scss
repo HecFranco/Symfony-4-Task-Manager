@@ -1,0 +1,25 @@
+/* You can add global styles to this file, and also import other style files */
+#logo{
+	height: 35px;
+	margin-top: -10px;
+}
+
+.no-padding{
+	padding-left: 0px;
+}
+
+#header {
+  border: 0.5px solid grey;
+}
+.loader {
+  img{
+    display: block;
+    margin: 0px auto;
+    text-align: center;
+    margin-bottom: 15px;
+  }
+}
+
+.btn-search{
+	padding: 6px 7px;
+}

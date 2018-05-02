@@ -1,0 +1,32 @@
+task_new:
+    path: /task/new
+    controller: App\Controller\TaskController::new
+    methods:   [POST]
+task_edit:
+    path: /task/edit/{id}
+    controller: App\Controller\TaskController::edit
+    defaults:
+        id: null    
+    methods:   [POST]
+task_list:
+    path: /task/list
+    controller: App\Controller\TaskController::tasks
+    methods:   [POST]
+task_detail:
+    path: /task/detail/{id}
+    controller: App\Controller\TaskController::task
+    defaults:
+        id: null    
+    methods:   [POST]   
+task_search:
+    path: /task/search/{search}
+    controller: App\Controller\TaskController::search
+    defaults:
+        search: null    
+    #methods:   [POST]
+task_remove:
+    path: /task/remove/{id}
+    controller: App\Controller\TaskController::remove
+    defaults:
+        id: null    
+    methods:   [POST]

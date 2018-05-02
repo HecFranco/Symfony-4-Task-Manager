@@ -1,0 +1,12 @@
+default_index:
+    path: /
+    controller: App\Controller\DefaultController::index
+    methods:   [GET]
+default_login:
+    path: /login
+    controller: App\Controller\DefaultController::login
+    methods:   [POST]
+default_pruebas:
+    path: /test
+    controller: App\Controller\DefaultController::tests
+    methods:   [POST] 
