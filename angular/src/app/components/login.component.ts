@@ -17,39 +17,49 @@ export class LoginComponent implements OnInit {
     private _route: ActivatedRoute,
     private _router: Router,
     private _userService: UserService,
-
-  ){
+  ) {
     this.title = 'Identify yourself';
     this.user = {
       'email': '',
       'password': '',
-      'gethash': false,
-      'accept': false,
+      'getHash': 'true',
     }
   }
 
   ngOnInit() {
     console.log('The login.component has been loaded!!!');
-    console.log(JSON.parse(localStorage.getItem('identity')))
+    console.log(JSON.parse(localStorage.getItem('identity')));
+    console.log(JSON.parse(localStorage.getItem('token')));
   }
   onSubmit(){
     console.log(this.user);
-    // this._userService.signup();
     this._userService.signup(this.user).subscribe(
       response => {
         this.identity = response;
         if(this.identity.length <= 1){
-          console.log('Server error');
-        }else{
+          console.log('Server Error');
+        }{
           if(!this.identity.status){
             localStorage.setItem('identity', JSON.stringify(this.identity));
+            // GET TOKEN
+            this.user.getHash = null;
+            this._userService.signup(this.user).subscribe(
+              response => {
+                this.token = response;
+                if(this.identity.length <= 1){
+                  console.log('Server Error');
+                }{
+                  if(!this.identity.status){
+                    localStorage.setItem('token', JSON.stringify(this.token));
+                  }
+                }
+              },
+              error => { console.log(<any>error); }
+            );
           }
         }
       },
-      error => {
-        console.log(<any>error);
-      }
+      error => { console.log(<any>error); }
     );
   }
-
 }

@@ -178,9 +178,7 @@ _[/src/app/app.component.html](./src/app/app.component.html)_
 ```diff
 <!--The content below is only a placeholder and can be replaced.-->
 -- <div style="text-align:center">
-   <h1>
-    Welcome to {{ title }}!
-   </h1>
+   <h1>Welcome to {{ title }}!</h1>
 --  <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
 -- </div>
 -- <h2>Here are some links to help you start: </h2>
@@ -511,33 +509,348 @@ _[/src/app/app.component.html](./src/app/app.component.html)_
 ng serve
 ```
 
-10. Access to [http://localhost:4200/](http://localhost:4200/) to view the result.
+10. Access to [http://localhost:4200/login](http://localhost:4200/login) or [http://localhost:4200/register](http://localhost:4200/register) to view the result.
 
 --------------------------------------------------------------------------------------------
 
-### 5.Layout Menu
+### 5.Navbar Menu
 
 --------------------------------------------------------------------------------------------
+
+1. We will create our **Navbar Menu** in [/src/app/app.component.html](./src/app/app.component.html).
 
 _[/src/app/app.component.html](./src/app/app.component.html)_
 ```diff
-++ <header id="header">
-++  <div class="navbar navbar-default">
-++    <div class="navbar-header">
-++      <button type="button" class="navbar-toggle collapsed" data-togle="collapse" data-target="#bs-example-navbar-collapse-1" aria-extended="false">
-++        <span class="sr-only">Toggle</span>
-++        <span class="icon--bar"></span>
-++        <span class="icon--bar"></span>
-++        <span class="icon--bar"></span>
-++      </button>
-++      <!--logo-->
-++      <a class="navbar-brand" [routerLink]="['/']"
-++        Personal Task
-++      </a>
-++    </div>
-++  </div>
-++ </header>
+++ <nav class="navbar navbar-expand-lg navbar-light bg-light" style="background-color: #e3f2fd;">
+++   <a class="navbar-brand" [routerLink]="['/']">
+++     <img src="./assets/img/logo.png" id="logo"/>
+++   </a>
+++   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+++     <span class="navbar-toggler-icon"></span>
+++   </button>
+++   <div class="collapse navbar-collapse" id="navbarSupportedContent">
+++     <ul class="navbar-nav mr-auto">
+++       <li class="nav-item active">
+++         <a class="nav-link"[routerLink]="['/']"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
+++       </li>
+++       <li class="nav-item">
+++         <a class="nav-link" [routerLink]="['/task-new']"><i class="fa fa-plus" aria-hidden="true"></i> New Task</a>
+++       </li>
+++       <li class="nav-item">
+++           <a class="nav-link" [routerLink]="['/user-edit']"><i class="fa fa-cog" aria-hidden="true"></i> Configuration</a>
+++       </li>
+++       <li class="nav-item">
+++         <a class="nav-link" [routerLink]="['/login', 1]"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
+++       </li>
+++     </ul>
+++     <ul class="navbar-nav ml-auto">
+++       <li class="nav-item">
+++         <a class="nav-link" [routerLink]="['/login']"> Access</a>
+++       </li>
+++       <li class="nav-item">
+++         <a class="nav-link" [routerLink]="['/register']"> Register</a>
+++       </li>
+++     </ul>
+++   </div>
+++ </nav>
+++ <div class="container">
 -- <!--The content below is only a placeholder and can be replaced.-->
 -- <h1>Welcome to {{ title }}!</h1>
 <router-outlet></router-outlet>
+++ </div>
 ```
+
+> This menu will always appear within the web.
+
+2. Now we can navigate through the different URLs
+
+--------------------------------------------------------------------------------------------
+
+### 6.Login Form
+
+--------------------------------------------------------------------------------------------
+
+1. We will created our first form, for the login in [src/app/views/login.component.html](./src/app/views/login.component.html).
+
+_[src/app/views/login.component.html](./src/app/views/login.component.html)_
+```diff
+++ <div class="col-md-12">
+  <h3>{{title}}</h3>
+++  <form #loginForm="ngForm" (ngSubmit)="onSubmit()" class="col-md-4 no-padding needs-validation">
+++   <div class="form-group">
+++    <label for="inputEmail">Email address</label>
+++    <input type="email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email">
+++   </div>
+++   <div class="form-group">
+++    <label for="inputPassword">Password</label>
+++    <input type="password" class="form-control" placeholder="Password">
+++   </div>
+++   <button type="submit" class="btn btn-primary">Submit</button>
+++  </form>
+++ </div>
+```
+
+2. And Update our stylesheet [src/app/styles.scss](./src/app/styles.scss).
+
+_[src/app/styles.scss](./src/app/styles.scss)_
+```diff
+/* You can add global styles to this file, and also import other style files */
+#logo{
+	height: 35px;
+	margin-top: -10px;
+}
+#header {
+  border: 0.5px solid grey;
+}
+++ .no-padding{
+++	padding-left: 0px;
+++ }
+```
+
+3. To send and receive the form we will act on the file [src/app/components/login.component.ts](./src/app/components/login.component.ts).
+
+_[src/app/components/login.component.ts](./src/app/components/login.component.ts)_
+```diff
+import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute, Params, RouterEvent } from '@angular/router';
+
+@Component({
+  selector: 'app-login',
+  templateUrl: '../views/login.component.html' 
+})
+export class RegisterComponent implements OnInit {
+  public title: string;
+++ public user: user;
+  constructor(
+    private _route: ActivatedRoute,
+    private _router: Router
+  ){
+    this.title = 'Login Component';
+++  this.user = {
+++    "email": "",
+++    "password":"",
+++    "getHash": false  
+++  }    
+  }
+  ngOnInit() {
+    console.log('The login.component has been loaded!!!');    
+  }
+++ onSubmit(){
+++  console.log(this.user);
+++ }
+}
+```
+
+> We have created a new property within the login component, `user`, that will manage the information sent in the form. Now we must link each element of the new user object within the form's view.
+> We also add the `onSubmit(){}` function added in the header of the form and that will be activated when sending it.
+
+4. Update [src/app/views/login.component.html](./src/app/views/login.component.html).
+
+_[src/app/views/login.component.html](./src/app/views/login.component.html)_
+```diff
+<div class="col-md-12">
+  <h3>{{title}}</h3>
+  <form #loginForm="ngForm" (ngSubmit)="onSubmit()" class="col-md-4 no-padding needs-validation">
+    <div class="form-group">
+      <label for="inputEmail">Email address</label>
+--    <input type="email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email">
+++    <input type="email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email" name="email" #email="ngModel" [(ngModel)]="user.email" required>
+++    <span *ngIf="!email.valid && email.touched">Invalid email</span>
+    </div>
+    <div class="form-group">
+      <label for="inputPassword">Password</label>
+--    <input type="password" class="form-control" placeholder="Password">
+++    <input type="password" class="form-control" placeholder="Password" name="password" #password="ngModel" [(ngModel)]="user.password" required>
+++    <span *ngIf="!password.valid && password.touched">Invalid email</span>
+    </div>
+--  <button type="submit" class="btn btn-primary">Submit</button>
+++  <button type="submit" class="btn btn-primary" [disabled]="!loginForm.form.valid">Submit</button>
+  </form>
+</div>
+```
+
+> We use the **name of input** `name = "email"`, a name in addition to **reference it within the angular component** `#email="ngModel"` and the element `[(ngModel)]="user.email"`. The latter will be used as **Two-way Data Binding**, with this element the content is updated in both directions, that is, modifying the form will also modify the varlo of the variable within the component.
+
+> We will add the `required` property within each input as these are necessary.
+
+> We will also add a message within a conditional as a validator, `<span *ngIf="!email.valid && email.touched">Invalid email</span>`.
+
+> We can also add the option to disable the send button when the form is not valid, `<button type="submit" class="btn btn-primary" [disabled]="!loginForm.form.valid">Submit</button>`.
+
+5. To be able to work with the form it is necessary to create several new service.
+
+> We will create a file that will save the global configuration of our application [src/app/services/gloal.ts](./src/app/services/gloal.ts).
+
+_[src/app/services/global.ts](./src/app/services/global.ts)_
+```ts
+export let GLOBAL = {
+  // Local
+  url: 'http://127.0.0.1:8000'
+  // Production
+  // url: 'http://127.0.0.1:8000'
+};
+```
+
+Other service will be.
+
+_[src/app/services/user.service.ts](./src/app/services/user.service.ts)_
+```ts
+import {Injectable} from '@angular/core';
+import {Http, Response, Headers} from '@angular/http';
+import 'rxjs/add/operator/map';
+import {Observable} from '../../../node_modules/rxjs/Observable';
+import {GLOBAL} from './global';
+
+@Injectable()
+export class UserService{
+  public url: string;
+
+  constructor(private _http: Http){
+    this.url = GLOBAL.url;
+  }
+  signup(){
+    console.log('hello from the service');
+  }
+}
+```
+
+6. And update [src/app/components/login.component.ts](./src/app/components/login.component.ts) with this new service.
+
+_[src/app/components/login.component.ts](./src/app/components/login.component.ts)_
+```diff
+import { Component, OnInit } from '@angular/core';
+import { Rouuserter, ActivatedRoute, Params, RouterEvent } from '@angular/router';
+++ import { UserService } from '../services/user.service';
+
+@Component({
+  selector: 'app-login',
+  templateUrl: '../views/login.component.html' 
+})
+export class RegisterComponent implements OnInit {
+  public title: string;
+  public user: user;
+  constructor(
+    private _route: ActivatedRoute,
+--  private _router: Router
+++  private _router: Router,    
+++  private _userService: UserService,    
+  ){
+    this.title = 'Login Component';
+    this.user = {
+      "email": "",
+      "password":"",
+      "getHash": false  
+    }    
+  }
+  ngOnInit() {
+    console.log('The login.component has been loaded!!!');    
+  }
+  onSubmit(){
+    console.log(this.user);
+++  this._userService.signup();
+  }    
+}
+```
+
+7. Now, you will be able to view the result of demo when write in the terminal the command console `npm start` or `:
+
+```bash
+ng serve
+```
+
+8. Access to [http://localhost:4200/login](http://localhost:4200/login) and send our form.
+
+> Next step will be to correctly send the form to interpret it and finally login.
+
+> **IMPORTANT**: Surely when sending the form you have a Error “No 'Access-Control-Allow-Origin' header is present on the requested resource”, this happens when consuming a REST API service with the POST method in AngularJS. To fix it locally, install this [Allow-Control-Allow-Origin](https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi) extension in chrome, activate it and allow connections between domains.
+
+9. Update [src/app/services/user.service.ts](./src/app/services/user.service.ts), to can send and use the method `singup(){}`.
+
+_[src/app/services/user.service.ts](./src/app/services/user.service.ts)_
+```diff
+import {Injectable} from '@angular/core';
+import {Http, Response, Headers} from '@angular/http';
+import 'rxjs/add/operator/map';
+import {Observable} from '../../../node_modules/rxjs/Observable';
+import {GLOBAL} from './global';
+
+@Injectable()
+export class UserService{
+  public url: string;
+
+  constructor(private _http: Http){
+    this.url = GLOBAL.url;
+  }
+-- signup(){
+++ signup(user_to_login){  
+--  console.log('hello from the service');
+++   let json = JSON.stringify(user_to_login);
+++   let params = "json="+json;
+++   let headers = new Headers({'Content-Type':'application/x-www-form-urlencoded'});
+++   return this._http.post(this.url+'/login', params, {headers: headers})
+++     .map(res => res.json());
+++ }
+}
+```
+
+10. We will modify [src/app/components/login.component.ts](./src/app/components/login.component.ts) to send the form using the **submit** button. We will need to add two new variables to use the `onSubmit(){}` method, `identity` and `token`.
+
+_[src/app/components/login.component.ts](./src/app/components/login.component.ts)_
+```diff
+import { Component, OnInit } from '@angular/core';
+import { Rouuserter, ActivatedRoute, Params, RouterEvent } from '@angular/router';
+import { UserService } from '../services/user.service';
+
+@Component({
+  selector: 'app-login',
+  templateUrl: '../views/login.component.html' 
+})
+export class RegisterComponent implements OnInit {
+  public title: string;
+  public user: user;
+++ public identity;
+++ public token; 
+
+  constructor(
+    private _route: ActivatedRoute,
+    private _router: Router,
+    private _userService: UserService,
+  ){
+    this.title = 'Login Component';
+    this.user = {
+      "email": "",
+      "password":"",
+      "getHash": false
+    }
+  }
+  ngOnInit() {
+    console.log('The login.component has been loaded!!!');
+++  console.log(JSON.parse(localStorage.getItem('identity')));
+  }
+  onSubmit(){
+    console.log(this.user);
+--  this._userService.signup();
+++  this._userService.signup(this.user).subscribe(
+++    response => {
+++      this.identity = response;
+++      if (this.identity.length <= 1) {
+++        console.log('Server error');
+++      } else {
+++        if (!this.identity.status) {
+++          localStorage.setItem('identity', JSON.stringify(this.identity));
+++        }
+++      }
+++    },
+++    error => {
+++      console.log(<any>error);
+++    }
+++  );
+  }
+}
+```
+
+> Now if we access within the browser inspector to **network > XHR** we will see two answers with the data requested to the service.
+
+![dev_tools_01](./resources/dev_tools_01.jpg)
+
+( Source: [https://blog.ng-classroom.com/blog/ionic2/validations-in-forms/](https://blog.ng-classroom.com/blog/ionic2/validations-in-forms/) )
