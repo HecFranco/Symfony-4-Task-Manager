@@ -1,1 +1,22 @@
-<p>{{title}}</p>
+<div class="col-md-12">
+  <h3>{{title}}</h3>
+  <form #registerForm="ngForm" (ngSubmit)="onSubmit()" class="col-md-4 no-padding needs-validation">
+    <div class="form-group">
+      <label for="inputName">Name</label>
+      <input type="text" class="form-control" name="name" required>
+    </div>
+    <div class="form-group">
+      <label for="inputSurname">Surname</label>
+      <input type="text" class="form-control" name="surname">
+    </div>    
+    <div class="form-group">
+      <label for="inputEmail">Email address</label>
+      <input type="email" class="form-control" name="email" required>
+    </div>
+    <div class="form-group">
+      <label for="inputPassword">Password</label>
+      <input type="password" class="form-control" name="password" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>

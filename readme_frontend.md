@@ -20,6 +20,7 @@ We will make the frontend of the application with the framework Angular and Boot
 ### Summary Console command`s to be used
 
 * `ng serve`
+* `ng test`
 * `ng generate module`
 * `ng help generate component`
 * `ng help generate component --dry-run`
@@ -60,6 +61,8 @@ ng serve
 ```
 
 5. Access to [http://localhost:4200/](http://localhost:4200/) to view the result.
+
+6. We can also perform a **test** by launching the command `ng test`.
 
 --------------------------------------------------------------------------------------------
 
@@ -103,7 +106,7 @@ npm install font-awesome jquery tether
       "styles": [
 --      "styles.scss"
 ++      "styles.scss",
-++      "../node_modules/bootstrap/dist/scss/bootstrap.scss"
+++      "../node_modules/bootstrap/scss/bootstrap.scss",
 ++      "../node_modules/font-awesome/scss/font-awesome.scss"
       ],
 --    "scripts": [],
@@ -138,6 +141,8 @@ ng serve
 
 5. Access to [http://localhost:4200/](http://localhost:4200/) to view the result.
 
+6. We can also perform a **test** by launching the command `ng test`.
+
 --------------------------------------------------------------------------------------------
 
 ### 3.Install Angular Material and Angular Animations
@@ -166,6 +171,8 @@ ng serve
 
 3. Access to [http://localhost:4200/](http://localhost:4200/) to view the result.
 
+4. We can also perform a **test** by launching the command `ng test`.
+
 --------------------------------------------------------------------------------------------
 
 ### 4.First Steps
@@ -193,6 +200,7 @@ _[/src/app/app.component.html](./src/app/app.component.html)_
 --    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
 --  </li>
 -- </ul>
+-- <router-outlet></router-outlet>
 ```
 
 2. In this project we will need to use the **angular form and http components**, for this we import them into [/src/app/app.module.ts](./src/app/app.module.ts).
@@ -232,8 +240,10 @@ export class AppModule { }
  |- /app/
       |- /components/
       |- /models/
-      |- /views/
+      |- /pipes/
+      |- /services/
       |- /test/
+      |- /views/
 ´´´
 
 3. We will generated our first component using the command `ng generate component login --style scss`.
@@ -267,6 +277,7 @@ import { HttpModule } from '@angular/http';
 import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
+
 -- import { LoginComponent } from './login/login.component';
 ++ import { LoginComponent } from './components/login.component';
 
@@ -287,14 +298,13 @@ import { AppComponent } from './app.component';
 export class AppModule { }
 ```
 
-> **Note:** Don't forget to declare the new component inside the decorator `@ ngmodule` in `declarations: [...]`.
+> **Note:** Don't forget to declare the new component inside the decorator `@NgModule` in `declarations: [...]`.
 
 5. In the next step we will modify [/src/app/components/login.component.ts](./src/app/components/login.component.ts). _We will also include the methods that will manage the routing (`import { Router, ActivatedRoute, Params, RouterEvent } from '@angular/router';`)._
 
 _[/src/app/components/login.component.ts](./src/app/components/login.component.ts)_
 ```diff
 import { Component, OnInit } from '@angular/core';
-++ import { Router, ActivatedRoute, Params, RouterEvent } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -307,8 +317,6 @@ export class LoginComponent implements OnInit {
 
 -- constructor() { }
 ++ constructor(
-++  private _route: ActivatedRoute,
-++  private _router: Router
 ++ ){
 ++  this.title = 'Login Component';
 ++ }
@@ -320,110 +328,22 @@ export class LoginComponent implements OnInit {
 }
 ```
 
-> We repeat the same process to create a **component register**, `ng generate component register --style scss`.
-
-```bash
-  create src/app/register/register.component.html (27 bytes)
-  create src/app/register/register.component.spec.ts (642 bytes)
-  create src/app/register/register.component.ts (278 bytes)
-  create src/app/register/register.component.scss (0 bytes)
-  update src/app/app.module.ts (691 bytes)
-```
-
-> This command will have generated a folder with the content of the new component within the app called login. As we mentioned before, we will have to redistribute that content and reference it in the different files to follow the logical structure of the previously defined project.
-
-* [/src/app/register/register.component.html](./src/app/register/register.component.html) ->
-[/src/app/views/register.component.html](./src/app/views/register.component.html).
-* [/src/app/register/register.component.ts](./src/app/register/register.component.ts) ->
-[/src/app/components/register.component.ts](./src/app/components/register.component.ts).
-* [/src/app/register/register.component.scss](./src/app/register/register.component.scss) -> it's erased.
-* [/src/app/register/register.component.spec.ts](./src/app/register/register.component.spec.ts) -> it's erased.
-
-
-6. We update [/src/app/app.module.ts](./src/app/app.module.ts) with the new component locations.
-
-_[/src/app/app.module.ts](./src/app/app.module.ts)_
-```diff
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
-
-import { AppRoutingModule } from './app-routing.module';
-
-import { AppComponent } from './app.component';
-import { LoginComponent } from './components/login.component';
--- import { RegisterComponent } from './register/register.component';
-++ import { RegisterComponent } from './components/register.component';
-
-@NgModule({
-  declarations: [
-    AppComponent,
-    LoginComponent
-    RegisterComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule,
-    HttpModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
-})
-export class AppModule { }
-```
-
-> **Note:** Don't forget to declare the new component inside the decorator `@ ngmodule` in `declarations: [...]`.
-
-7. In the next step we will modify [/src/app/components/register.component.ts](./src/app/components/register.component.ts). _We will also include the methods that will manage the routing (`import { Router, ActivatedRoute, Params, RouterEvent } from '@angular/router';`)._
-
-_[/src/app/components/login.component.ts](./src/app/components/login.component.ts)_
-```diff
-import { Component, OnInit } from '@angular/core';
-++ import { Router, ActivatedRoute, Params, RouterEvent } from '@angular/router';
-
-@Component({
-  selector: 'app-register',
--- templateUrl: './register.component.html',
-++ templateUrl: '../views/register.component.html' 
--- styleUrls: ['./register.component.scss']
-})
-export class RegisterComponent implements OnInit {
-++ public title: string;
-
--- constructor() { }
-++ constructor(
-++  private _route: ActivatedRoute,
-++  private _router: Router
-++ ){
-++  this.title = 'Register Component';
-++ }
-
-  ngOnInit() {
-++ console.log('The register.component has been loaded!!!');    
-  }
-
-}
-```
-
-8. Now we can include the component within the module [/src/app/app.component.html](./src/app/app.component.html).
+6. Now we can include the component within the module [/src/app/app.component.html](./src/app/app.component.html).
 
 _[/src/app/app.component.html](./src/app/app.component.html)_
 ```diff
 <!--The content below is only a placeholder and can be replaced.-->
 <h1>Welcome to {{ title }}!</h1>
 ++ <app-login></app-login>
-++ <app-register></app-register>
 ```
 
-9. Now, you will be able to view the result of demo when write in the terminal the command console `npm start` or `:
+7. Now, you will be able to view the result of demo when write in the terminal the command console `npm start` or `:
 
 ```bash
 ng serve
 ```
 
-10. Access to [http://localhost:4200/](http://localhost:4200/) to view the result.
+8. Access to [http://localhost:4200/](http://localhost:4200/) to view the result.
 
 
 --------------------------------------------------------------------------------------------
@@ -441,13 +361,11 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 ++ import { LoginComponent } from './components/login.component';
-++ import { RegisterComponent } from './components/register.component';
 
 -- const routes: Routes = [];
 ++ const routes: Routes = [
 ++   {path: '', component: LoginComponent},
 ++   {path: 'login', component: LoginComponent},
-++   {path: 'register', component: RegisterComponent},
 ++   {path: '**', component: LoginComponent}
 ++ ];
 
@@ -467,18 +385,16 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
-import { AppRoutingModule } from './app-routing.module';
 ++ import { RouterModule } from '@angular/router';
+import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './components/login.component';
-import { RegisterComponent } from './components/register.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent,
-    RegisterComponent
+    LoginComponent
   ],
   imports: [
     BrowserModule,
@@ -499,7 +415,6 @@ _[/src/app/app.component.html](./src/app/app.component.html)_
 <!--The content below is only a placeholder and can be replaced.-->
 <h1>Welcome to {{ title }}!</h1>
 -- <app-login></app-login>
--- <app-register></app-register>
 ++ <router-outlet></router-outlet>
 ```
 
@@ -509,7 +424,7 @@ _[/src/app/app.component.html](./src/app/app.component.html)_
 ng serve
 ```
 
-10. Access to [http://localhost:4200/login](http://localhost:4200/login) or [http://localhost:4200/register](http://localhost:4200/register) to view the result.
+10. Access to [http://localhost:4200/login](http://localhost:4200/login) to view the result.
 
 --------------------------------------------------------------------------------------------
 
@@ -560,9 +475,23 @@ _[/src/app/app.component.html](./src/app/app.component.html)_
 ++ </div>
 ```
 
+2. And Update our stylesheet [src/app/styles.scss](./src/app/styles.scss).
+
+_[src/app/styles.scss](./src/app/styles.scss)_
+```diff
+/* You can add global styles to this file, and also import other style files */
+#logo{
+	height: 35px;
+	margin-top: -10px;
+}
+#header {
+  border: 0.5px solid grey;
+}
+```
+
 > This menu will always appear within the web.
 
-2. Now we can navigate through the different URLs
+3. Now we can navigate through the different URLs
 
 --------------------------------------------------------------------------------------------
 
@@ -574,8 +503,9 @@ _[/src/app/app.component.html](./src/app/app.component.html)_
 
 _[src/app/views/login.component.html](./src/app/views/login.component.html)_
 ```diff
+-- <p>login works!</p>
 ++ <div class="col-md-12">
-  <h3>{{title}}</h3>
+++ <h3>{{title}}</h3>
 ++  <form #loginForm="ngForm" (ngSubmit)="onSubmit()" class="col-md-4 no-padding needs-validation">
 ++   <div class="form-group">
 ++    <label for="inputEmail">Email address</label>
@@ -618,12 +548,11 @@ import { Router, ActivatedRoute, Params, RouterEvent } from '@angular/router';
   selector: 'app-login',
   templateUrl: '../views/login.component.html' 
 })
-export class RegisterComponent implements OnInit {
+export class LoginComponent implements OnInit {
   public title: string;
-++ public user: user;
+++ public user;
+
   constructor(
-    private _route: ActivatedRoute,
-    private _router: Router
   ){
     this.title = 'Login Component';
 ++  this.user = {
@@ -632,9 +561,11 @@ export class RegisterComponent implements OnInit {
 ++    "getHash": false  
 ++  }    
   }
+
   ngOnInit() {
     console.log('The login.component has been loaded!!!');    
   }
+
 ++ onSubmit(){
 ++  console.log(this.user);
 ++ }
@@ -642,6 +573,7 @@ export class RegisterComponent implements OnInit {
 ```
 
 > We have created a new property within the login component, `user`, that will manage the information sent in the form. Now we must link each element of the new user object within the form's view.
+
 > We also add the `onSubmit(){}` function added in the header of the form and that will be activated when sending it.
 
 4. Update [src/app/views/login.component.html](./src/app/views/login.component.html).
@@ -709,7 +641,7 @@ export class UserService{
     this.url = GLOBAL.url;
   }
   signup(){
-    console.log('hello from the service');
+    console.log('Service user started');
   }
 }
 ```
@@ -724,16 +656,15 @@ import { Rouuserter, ActivatedRoute, Params, RouterEvent } from '@angular/router
 
 @Component({
   selector: 'app-login',
-  templateUrl: '../views/login.component.html' 
+--  templateUrl: '../views/login.component.html'  
+++  templateUrl: '../views/login.component.html',
+++ providers: [UserService]
 })
-export class RegisterComponent implements OnInit {
+export class LoginComponent implements OnInit {
   public title: string;
   public user: user;
   constructor(
-    private _route: ActivatedRoute,
---  private _router: Router
-++  private _router: Router,    
-++  private _userService: UserService,    
+++  private _userService: UserService 
   ){
     this.title = 'Login Component';
     this.user = {
@@ -783,7 +714,7 @@ export class UserService{
   }
 -- signup(){
 ++ signup(user_to_login){  
---  console.log('hello from the service');
+--   console.log('Service user started');
 ++   let json = JSON.stringify(user_to_login);
 ++   let params = "json="+json;
 ++   let headers = new Headers({'Content-Type':'application/x-www-form-urlencoded'});
@@ -803,17 +734,16 @@ import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-login',
-  templateUrl: '../views/login.component.html' 
+  templateUrl: '../views/login.component.html',
+  providers: [UserService]
 })
-export class RegisterComponent implements OnInit {
+export class LoginComponent implements OnInit {
   public title: string;
-  public user: user;
+  public user;
 ++ public identity;
 ++ public token; 
 
   constructor(
-    private _route: ActivatedRoute,
-    private _router: Router,
     private _userService: UserService,
   ){
     this.title = 'Login Component';
@@ -825,7 +755,7 @@ export class RegisterComponent implements OnInit {
   }
   ngOnInit() {
     console.log('The login.component has been loaded!!!');
-++  console.log(JSON.parse(localStorage.getItem('identity')));
+++  console.log('Login-Component - Identity : ', JSON.parse(localStorage.getItem('identity')));
   }
   onSubmit(){
     console.log(this.user);
@@ -833,17 +763,16 @@ export class RegisterComponent implements OnInit {
 ++  this._userService.signup(this.user).subscribe(
 ++    response => {
 ++      this.identity = response;
+++      console.log('Identity Response : ', response);
 ++      if (this.identity.length <= 1) {
 ++        console.log('Server error');
 ++      } else {
-++        if (!this.identity.status) {
-++          localStorage.setItem('identity', JSON.stringify(this.identity));
+++        if (!this.identity.status) { 
+++          localStorage.setItem('identity', JSON.stringify(this.identity)); 
 ++        }
 ++      }
 ++    },
-++    error => {
-++      console.log(<any>error);
-++    }
+++    error => { console.log(<any>error); }
 ++  );
   }
 }
@@ -852,5 +781,711 @@ export class RegisterComponent implements OnInit {
 > Now if we access within the browser inspector to **network > XHR** we will see two answers with the data requested to the service.
 
 ![dev_tools_01](./resources/dev_tools_01.jpg)
+
+11. We update login.component by adding the token option when sending the form.
+
+_[src/app/components/login.component.ts](./src/app/components/login.component.ts)_
+```diff
+import { Component, OnInit } from '@angular/core';
+import { Rouuserter, ActivatedRoute, Params, RouterEvent } from '@angular/router';
+import { UserService } from '../services/user.service';
+
+// ...
+
+export class LoginComponent implements OnInit {
+  // ...
+  ngOnInit() {
+    console.log('The login.component has been loaded!!!');
+    console.log('Login-Component - Identity : ', JSON.parse(localStorage.getItem('identity')));
+++  console.log('Login-Component - Token : ', JSON.parse(localStorage.getItem('token')));
+  }  
+  onSubmit(){
+    console.log(this.user);
+    this._userService.signup(this.user).subscribe(
+      response => {
+        this.identity = response;
+        console.log('Identity Response : ', response);
+        if (this.identity.length <= 1) {
+          console.log('Server error');
+        } else {
+          if (!this.identity.status) { 
+            localStorage.setItem('identity', JSON.stringify(this.identity)); 
+++          // GET TOKEN
+++          this.user.getHash = null;
+++          this._userService.signup(this.user).subscribe(
+++            response => {
+++              this.token = response;
+++              console.log('Token Response : ', response);
+++              if(this.identity.length <= 1){
+++                console.log('Server Error');
+++              } else {
+++                if(!this.identity.status){ 
+++                  localStorage.setItem('token', JSON.stringify(this.token)); 
+++                  window.location.href = "/"; 
+++                }
+++              }
+++            },
+++            error => { console.log(<any>error); }
+++          );
+          }
+        }
+      },
+      error => {
+        console.log(<any>error);
+      }
+    );
+  }
+}
+```
+
+12. And update the template of the component, [src/app/views/login.component.html](./src/app/views/login.component.html), to indicate that the login was correct or not.
+
+_[src/app/views/login.component.html](./src/app/views/login.component.html)_
+```diff
+<div class="col-md-12">
+  <h3>{{title}}</h3>
+++ <div class="indentity-alert alert alert-success" *ngIf="identity && identity.sub">
+++   You have identified correctly! Wellcome {{identity.email}}
+++ </div>
+++ <div class="indentity-alert alert alert-danger" *ngIf="identity && identity.data">
+++   You have not identified correctly! 
+++ </div>   
+  <form #loginForm="ngForm" (ngSubmit)="onSubmit()" class="col-md-4 no-padding needs-validation">
+    <div class="form-group">
+      <label for="inputEmail">Email address</label>
+      <input type="email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email" name="email" #email="ngModel" [(ngModel)]="user.email" required>
+      <span *ngIf="!email.valid && email.touched">Invalid email</span>
+    </div>
+    <div class="form-group">
+      <label for="inputPassword">Password</label>
+      <input type="password" class="form-control" placeholder="Password" name="password" #password="ngModel" [(ngModel)]="user.password" required>
+      <span *ngIf="!password.valid && password.touched">Invalid email</span>
+    </div>
+    <button type="submit" class="btn btn-primary" [disabled]="!loginForm.form.valid">Submit</button>
+  </form>
+</div>
+```
+
+13. Finally we will generate the default component, that will perform the home function, using the command `ng generate component default --style scss`
+
+```bash
+  create src/app/default/default.component.html (26 bytes)
+  create src/app/default/default.component.spec.ts (635 bytes)
+  create src/app/default/default.component.ts (274 bytes)
+  create src/app/default/default.component.scss (0 bytes)
+  update src/app/app.module.ts (857 bytes)
+```
+
+> This command will have generated a folder with the content of the new component within the app called **default**. As we mentioned before, we will have to redistribute that content and reference it in the different files to follow the logical structure of the previously defined project.
+
+* [/src/app/default/default.component.html](./src/app/default/default.component.html) ->
+[/src/app/views/default.component.html](./src/app/views/default.component.html).
+* [/src/app/default/default.component.ts](./src/app/default/default.component.ts) ->
+[/src/app/components/default.component.ts](./src/app/components/default.component.ts).
+* [/src/app/default/default.component.scss](./src/app/default/default.component.scss) -> it's erased.
+* [/src/app/default/default.component.spec.ts](./src/app/default/default.component.spec.ts) -> it's erased.
+
+14. We update [/src/app/app.module.ts](./src/app/app.module.ts) with the new component locations.
+
+_[/src/app/app.module.ts](./src/app/app.module.ts)_
+```diff
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { HttpModule } from '@angular/http';
+
+import { AppRoutingModule } from './app-routing.module';
+
+import { AppComponent } from './app.component';
+
+import { LoginComponent } from './components/login.component';
+-- import { DefaultComponent } from './default/default.component';
+++ import { DefaultComponent } from './components/default.component';
+
+@NgModule({
+  declarations: [
+    AppComponent,
+--  LoginComponent
+++  LoginComponent,
+++  DefaultComponent
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule,
+    HttpModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+```
+
+> **Note:** Don't forget to declare the new component inside the decorator `@NgModule` in `declarations: [...]`.
+
+15. In the next step we will modify [/src/app/components/default.component.ts](./src/app/components/default.component.ts). _We will also include the methods that will manage the routing (`import { Router, ActivatedRoute, Params, RouterEvent } from '@angular/router';`)._
+
+_[/src/app/components/default.component.ts](./src/app/components/default.component.ts)_
+```diff
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-default',
+-- templateUrl: './default.component.html',
+++ templateUrl: '../views/default.component.html' 
+-- styleUrls: ['./default.component.scss']
+})
+export class DefaultComponent implements OnInit {
+++ public title: string;
+
+-- constructor() { }
+++ constructor(
+++ ){
+++  this.title = 'Default Component';
+++ }
+
+  ngOnInit() {
+++ console.log('The default.component has been loaded!!!');    
+  }
+
+}
+```
+
+16. And we will updated [src/app/app-routing.module.ts](./src/app/app-routing.module.ts).
+
+_[src/app/app-routing.module.ts](./src/app/app-routing.module.ts)_
+```diff
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+
+import { LoginComponent } from './components/login.component';
+-- import { DefaultComponent } from './default/default.component';
+++ import { DefaultComponent } from './components/default.component';
+
+const routes: Routes = [
+-- { path: '', component: LoginComponent },
+++ { path: '', component: DefaultComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'logout', component: LoginComponent },
+  { path: '**', component: LoginComponent },
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+```
+
+--------------------------------------------------------------------------------------------
+
+### 7.Auxiliary Login Methods
+
+--------------------------------------------------------------------------------------------
+
+> We will generate a series of auxiliary methods that will allow us to extract information from the user entity. These methods extract information from the `localstorage`
+
+1. We will update [src/app/services/user.service.ts](./src/app/services/user.service.ts) with those new auxiliary methods.
+
+_[src/app/services/user.service.ts](./src/app/services/user.service.ts)_
+```diff
+import { Injectable } from '@angular/core';
+import { Http, Response, Headers } from '@angular/http';
+import 'rxjs/add/operator/map';
+import { Observable } from '../../../node_modules/rxjs/Observable';
+import { GLOBAL } from './global';
+
+@Injectable()
+export class UserService {
+  public url: string;
+++ public identity;
+++ public token;
+
+  constructor(private _http: Http) {
+    this.url = GLOBAL.url;
+  }
+  signup(user_to_login) {
+    console.log('Service user started');
+    let json = JSON.stringify(user_to_login);
+    let params = "json=" + json;
+    let headers = new Headers({ 'Content-Type': 'application/x-www-form-urlencoded' });
+    return this._http.post(this.url + '/login', params, { headers: headers })
+      .map(res => res.json());
+  }
+++ getIdentity() {
+++   let identity = JSON.parse(localStorage.getItem('identity'));
+++   this.identity = (identity != "undefined") ? identity : null;
+++   return this.identity;
+++ }
+
+++ getToken() {
+++   let token = JSON.parse(localStorage.getItem('token'));
+++   this.token = (token != "undefined") ? token : null;
+++   return this.token;
+++ }  
+}
+```
+
+2. We tested these auxiliary methods in [src/app/views/login.component.ts](./src/app/views/login.component.ts).
+
+_[src/app/components/login.component.ts](./src/app/components/login.component.ts)_
+```diff
+import { Component, OnInit } from '@angular/core';
+import { Rouuserter, ActivatedRoute, Params, RouterEvent } from '@angular/router';
+import { UserService } from '../services/user.service';
+
+// ...
+
+export class LoginComponent implements OnInit {
+  // ...
+  ngOnInit() {
+    console.log('The login.component has been loaded!!!');
+--  console.log('Login-Component - Identity : ', JSON.parse(localStorage.getItem('identity')));
+++  console.log(this._userService.getIdentity());    
+--  console.log('Login-Component - Token : ', JSON.parse(localStorage.getItem('token')));
+++  console.log(this._userService.getToken()); 
+  }
+  // ...
+}
+```
+
+3. The next step will be to take from the [src/app/views/login.component.ts](./src/app/views/login.component.ts) component to the module [src/app/app.component.html](./src/app/views/app.component.html) the `ngOnInit(){}` functions that show the login data to verify its correct functioning.
+
+
+_[src/app/components/login.component.ts](./src/app/components/login.component.ts)_
+```diff
+import { Component, OnInit } from '@angular/core';
+import { Rouuserter, ActivatedRoute, Params, RouterEvent } from '@angular/router';
+import { UserService } from '../services/user.service';
+
+// ...
+
+export class LoginComponent implements OnInit {
+  // ...
+  ngOnInit() {
+    console.log('The login.component has been loaded!!!');
+--  console.log(this._userService.getIdentity());    
+--  console.log(this._userService.getToken()); 
+  }
+  // ...
+}
+```
+
+_[src/app/app.component.ts](./src/app/app.component.ts)_
+```diff
+-- import { Component } from '@angular/core';
+++ import { Component, OnInit } from '@angular/core';
+++ import { UserService } from './services/user.service';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+-- styleUrls: ['./app.component.scss']
+++ styleUrls: ['./app.component.scss'],
+++ providers:[UserService]
+})
+export class AppComponent {
+  title = 'app';
+
+++ constructor (
+++  private _userService: UserService  
+++ ){}
+
+++ ngOnInit(){
+++  console.log(this._userService.getIdentity());    
+++  console.log(this._userService.getToken());
+++ }
+```
+
+4. Now, you will be able to view the result of demo when write in the terminal the command console `npm start` or `:
+
+```bash
+ng serve
+```
+
+5. Access to [http://localhost:4200/login](http://localhost:4200/login) and send our form.
+
+> Next step will be to correctly send the form to interpret it and finally login.
+
+> **IMPORTANT**: Surely when sending the form you have a Error “No 'Access-Control-Allow-Origin' header is present on the requested resource”, this happens when consuming a REST API service with the POST method in AngularJS. To fix it locally, install this [Allow-Control-Allow-Origin](https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi) extension in chrome, activate it and allow connections between domains.
+
+> Now if we access within the browser inspector to **Console** we will see two answers with the data requested to the service.
+
+![dev_tools_02](./resources/dev_tools_02.jpg)
+
+> We are already logged in, so if we move through the different urls of our application we can see the data of our user.
+
+--------------------------------------------------------------------------------------------
+
+### 8.Authentication Throughout the App
+
+--------------------------------------------------------------------------------------------
+
+1. Then, we will take the login system to [src/app/app.component.ts](./src/app/app.component.ts).
+
+_[src/app/app.component.ts](./src/app/app.component.ts)_
+```diff
+import { Component, OnInit } from '@angular/core';
+import { UserService } from './services/user.service';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
+  providers:[UserService]
+})
+export class AppComponent {
+-- title = 'app';
+++ public title = 'app';
+++ public identity;
+++ public token;
+
+  constructor (
+    private _userService: UserService  
+--  ){}
+++  ){
+++    this.identity = this._userService.getIdentity();
+++    this.identity = this._userService.getToken();
+++  }
+
+  ngOnInit(){
+--  console.log(this._userService.getIdentity());
+--  console.log(this._userService.getToken());
+++  console.log('app.component loaded!!');
+  }
+```
+
+--------------------------------------------------------------------------------------------
+
+### 9.Variations of NavBar Menu
+
+--------------------------------------------------------------------------------------------
+
+1. The menu will change according to our authentication status (logged, not logged).
+
+_[/src/app/app.component.html](./src/app/app.component.html)_
+```diff
+<nav class="navbar navbar-expand-lg navbar-light bg-light" style="background-color: #e3f2fd;">
+  <a class="navbar-brand" [routerLink]="['/']">
+    <img src="./assets/img/logo.png" id="logo"/>
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link"[routerLink]="['/']"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
+      </li>
+      <li class="nav-item">
+--      <a class="nav-link" [routerLink]="['/task-new']"><i class="fa fa-plus" aria-hidden="true"></i> New Task</a>   
+++      <a class="nav-link" [routerLink]="['/task-new']" *ngIf="identity && identity.sub">
+++        <i class="fa fa-plus" aria-hidden="true"></i> 
+++        New Task
+++      </a>
+      </li>
+++  </ul>      
+++  <ul class="navbar-nav ml-auto" *ngIf="identity && identity.sub">
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/user-edit']"><i class="fa fa-cog" aria-hidden="true"></i> Configuration</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/login', 1]"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
+      </li>
+    </ul>
+--  <ul class="navbar-nav ml-auto">
+++  <ul class="navbar-nav ml-auto" *ngIf="!identity">
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/login']"> Access</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/register']"> Register</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<div class="container">
+  <router-outlet></router-outlet>
+</div>
+```
+
+--------------------------------------------------------------------------------------------
+
+### 10.System LogOut
+
+--------------------------------------------------------------------------------------------
+
+1. We add a route in [src/app/app-routing.module.ts](./src/app/app-routing.module.ts) for the logout function.
+
+_[/src/app/app-routing.module.ts](./src/app/app-routing.module.ts)_
+```diff
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+
+import { LoginComponent } from './components/login.component';
+import { DefaultComponent } from './components/default.component';
+
+const routes: Routes = [
+  {path: '', component: DefaultComponent},
+  {path: 'login', component: LoginComponent},
+++ {path: 'logout', component: LoginComponent},
+  {path: '**', component: LoginComponent}
+  ];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+```
+
+_[src/app/components/login.component.ts](./src/app/components/login.component.ts)_
+```diff
+import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute, Params, RouterEvent } from '@angular/router';
+import { UserService } from '../services/user.service';
+
+@Component({
+  // ...
+})
+export class LoginComponent implements OnInit {
+  // ...
+
+  constructor(
+    private _userService: UserService,
+++  private _router: Router,
+  ) {
+    this.title = 'Identify yourself';
+    this.user = {
+      'email': '',
+      'password': '',
+      'getHash': 'true'
+    }
+  }
+
+  ngOnInit() {
+    console.log('The login.component has been loaded!!!');
+++  this.logout();
+  }
+
+  onSubmit() {
+    // ...
+  }
+
+++ logout() {
+++  if (this._router.url === '/logout') {
+++    localStorage.removeItem('identity');
+++    localStorage.removeItem('token');
+++
+++    this.identity = null;
+++    this.token = null;
+++
+++    window.location.href = '/';
+++  }
+++ }
+}
+```
+
+--------------------------------------------------------------------------------------------
+
+### 11.Block Access to the Authenticated Login Form
+
+--------------------------------------------------------------------------------------------
+
+_[src/app/components/login.component.ts](./src/app/components/login.component.ts)_
+```diff
+import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute, Params, RouterEvent } from '@angular/router';
+import { UserService } from '../services/user.service';
+
+@Component({
+  // ...
+})
+export class LoginComponent implements OnInit {
+  // ...
+
+  constructor(
+    private _userService: UserService,
+    private _router: Router,
+  ) {
+    this.title = 'Identify yourself';
+    this.user = {
+      'email': '',
+      'password': '',
+      'getHash': 'true'
+    }
+  }
+
+  ngOnInit() {
+    console.log('The login.component has been loaded!!!');
+    this.logout();
+++  redirectIfIdentity();    
+  }
+
+  onSubmit() {
+    // ...
+  }
+
+  logout(){
+    // ...
+  }
+
+++ redirectIfIdentity() {
+++  let identity = this._userService.getIdentity();
+++  if (identity != null && identity.sub && this._router.url === '/login') {
+++    this._router.navigate(["/"]);
+++  }
+++ }
+}
+```
+
+--------------------------------------------------------------------------------------------
+
+### 12.Register Form
+
+--------------------------------------------------------------------------------------------
+
+1. We repeat the same process to create a **component register**, `ng generate component register --style scss`.
+
+```bash
+  create src/app/register/register.component.html (27 bytes)
+  create src/app/register/register.component.spec.ts (642 bytes)
+  create src/app/register/register.component.ts (278 bytes)
+  create src/app/register/register.component.scss (0 bytes)
+  update src/app/app.module.ts (691 bytes)
+```
+
+> This command will have generated a folder with the content of the new component within the app called login. As we mentioned before, we will have to redistribute that content and reference it in the different files to follow the logical structure of the previously defined project.
+
+* [/src/app/register/register.component.html](./src/app/register/register.component.html) ->
+[/src/app/views/register.component.html](./src/app/views/register.component.html).
+* [/src/app/register/register.component.ts](./src/app/register/register.component.ts) ->
+[/src/app/components/register.component.ts](./src/app/components/register.component.ts).
+* [/src/app/register/register.component.scss](./src/app/register/register.component.scss) -> it's erased.
+* [/src/app/register/register.component.spec.ts](./src/app/register/register.component.spec.ts) -> it's erased.
+
+
+2. We update [/src/app/app.module.ts](./src/app/app.module.ts) with the new component locations.
+
+_[/src/app/app.module.ts](./src/app/app.module.ts)_
+```diff
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { HttpModule } from '@angular/http';
+
+import { AppRoutingModule } from './app-routing.module';
+
+import { AppComponent } from './app.component';
+
+import { LoginComponent } from './components/login.component';
+import { DefaultComponent } from './components/default.component';
+-- import { RegisterComponent } from './register/register.component';
+++ import { RegisterComponent } from './components/register.component';
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    LoginComponent,
+    DefaultComponent,
+    RegisterComponent
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule,
+    HttpModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+```
+
+> **Note:** Don't forget to declare the new component inside the decorator `@ ngmodule` in `declarations: [...]`.
+
+3. In the next step we will modify [/src/app/components/register.component.ts](./src/app/components/register.component.ts). _We will also include the methods that will manage the routing (`import { Router, ActivatedRoute, Params, RouterEvent } from '@angular/router';`)._
+
+_[/src/app/components/register.component.ts](./src/app/components/register.component.ts)_
+```diff
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-register',
+-- templateUrl: './register.component.html',
+++ templateUrl: '../views/register.component.html' 
+-- styleUrls: ['./register.component.scss']
+})
+export class RegisterComponent implements OnInit {
+++ public title: string;
+
+-- constructor() { }
+++ constructor(
+++ ){
+++  this.title = 'Register Component';
+++ }
+
+  ngOnInit() {
+++ console.log('The register.component has been loaded!!!');    
+  }
+
+}
+```
+
+4. Now we will modify [/src/app/app-routing.module.ts](./src/app/app-routing.module.ts)
+
+_[/src/app/app-routing.module.ts](./src/app/app-routing.module.ts)_
+```diff
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+
+import { LoginComponent } from './components/login.component';
+import { DefaultComponent } from './components/default.component';
+++ import { RegisterComponent } from './components/register.component';
+
+const routes: Routes = [
+  {path: '', component: DefaultComponent},
+  {path: 'login', component: LoginComponent},
+  {path: 'logout', component: LoginComponent},
+++ {path: 'register', component: RegisterComponent},
+  {path: '**', component: LoginComponent}
+  ];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+```
+
+
+
+
+_[/src/app/views/register.component.html](./src/app/views/register.component.html)_
+```diff
+-- <p>
+--   register works!
+-- </p>
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ( Source: [https://blog.ng-classroom.com/blog/ionic2/validations-in-forms/](https://blog.ng-classroom.com/blog/ionic2/validations-in-forms/) )

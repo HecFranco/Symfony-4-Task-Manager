@@ -786,7 +786,7 @@ class DefaultController extends Controller {
 ++          }else{
 ++              $signup = $jwt_auth->signup($email, $pwd, true);
 ++          }
-++          return $this->json($signup);
+++          return new JsonResponse($signup);
         }else{
             $data = array(
                 'status' => 'error',
@@ -798,6 +798,8 @@ class DefaultController extends Controller {
   }
 //..
 ```
+
+> **IMPORTANT** We replace the return command `$this->json($signup);` by `return new JsonResponse($signup);` to avoid failures in the transformation to json.
 
 10. we must generate a new method within the service that checks the token.
 

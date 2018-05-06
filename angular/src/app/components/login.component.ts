@@ -14,43 +14,46 @@ export class LoginComponent implements OnInit {
   public token;
 
   constructor(
-    private _route: ActivatedRoute,
-    private _router: Router,
     private _userService: UserService,
+    private _router: Router,
   ) {
     this.title = 'Identify yourself';
     this.user = {
       'email': '',
       'password': '',
-      'getHash': 'true',
+      'getHash': 'true'
     }
   }
 
   ngOnInit() {
     console.log('The login.component has been loaded!!!');
-    console.log(JSON.parse(localStorage.getItem('identity')));
-    console.log(JSON.parse(localStorage.getItem('token')));
+    this.logout();
+    this.redirectIfIdentity();
   }
-  onSubmit(){
-    console.log(this.user);
+
+  onSubmit() {
+    console.log('Data sent : ', this.user);
     this._userService.signup(this.user).subscribe(
       response => {
         this.identity = response;
-        if(this.identity.length <= 1){
+        console.log('Identity Response : ', response);
+        if (this.identity.length <= 1) {
           console.log('Server Error');
-        }{
-          if(!this.identity.status){
+        } else {
+          if (!this.identity.status) {
             localStorage.setItem('identity', JSON.stringify(this.identity));
             // GET TOKEN
-            this.user.getHash = null;
+            this.user.getHash = 'null';
             this._userService.signup(this.user).subscribe(
               response => {
                 this.token = response;
-                if(this.identity.length <= 1){
+                console.log('Token Response : ', response);
+                if (this.identity.length <= 1) {
                   console.log('Server Error');
-                }{
-                  if(!this.identity.status){
+                } {
+                  if (!this.identity.status) {
                     localStorage.setItem('token', JSON.stringify(this.token));
+                    window.location.href = "/";
                   }
                 }
               },
@@ -61,5 +64,24 @@ export class LoginComponent implements OnInit {
       },
       error => { console.log(<any>error); }
     );
+  }
+
+  logout() {
+    if (this._router.url === '/logout') {
+      localStorage.removeItem('identity');
+      localStorage.removeItem('token');
+
+      this.identity = null;
+      this.token = null;
+
+      window.location.href = '/login';
+    }
+  }
+
+  redirectIfIdentity() {
+    let identity = this._userService.getIdentity();
+    if (identity != null && identity.sub && this._router.url === '/login') {
+      this._router.navigate(["/"]);
+    }
   }
 }
