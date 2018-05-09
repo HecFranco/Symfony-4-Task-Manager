@@ -1,5 +1,5 @@
 user_new:
-    path: /new
+    path: /user/new
     controller: App\Controller\UserController::new
     methods:   [POST]
 user_edit:

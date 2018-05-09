@@ -14,10 +14,7 @@ class User implements UserInterface {
 		public function getId() { return $this->id; } 
     private $username;
     public function getUsername() { return $this->username; }
-    public function setUsername($username) { $this->username = $username; } 		 
-		private $name;
-    public function setName($name) { $this->name = $name; return $this; }
-    public function getName() { return $this->name; }		
+    public function setUsername($username) { $this->username = $username; } 		 	
 		private $surname;
     public function setSurname($surname) { $this->surname = $surname; return $this; }
     public function getSurname() { return $this->surname; }		

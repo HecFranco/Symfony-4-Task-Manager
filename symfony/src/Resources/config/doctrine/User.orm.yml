@@ -24,12 +24,6 @@ App\Entity\User:
             length: 180
             options:
                 fixed: false
-        name:
-            type: string
-            nullable: true
-            length: 180
-            options:
-                fixed: false
         surname:
             type: string
             nullable: true

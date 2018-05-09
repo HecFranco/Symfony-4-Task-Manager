@@ -1466,20 +1466,240 @@ _[/src/app/views/register.component.html](./src/app/views/register.component.htm
 -- <p>
 --   register works!
 -- </p>
+++ <div class="col-md-12">
+++   <h3>{{title}}</h3>
+++   <form #registerForm="ngForm" (ngSubmit)="onSubmit()" class="col-md-4 no-padding needs-validation">
+++     <div class="form-group">
+++       <label for="inputName">Name</label>
+++       <input type="text" class="form-control" name="name" required>
+++     </div>
+++     <div class="form-group">
+++       <label for="inputSurname">Surname</label>
+++       <input type="text" class="form-control" name="surname">
+++     </div>    
+++     <div class="form-group">
+++       <label for="inputEmail">Email address</label>
+++       <input type="email" class="form-control" name="email" required>
+++     </div>
+++     <div class="form-group">
+++       <label for="inputPassword">Password</label>
+++       <input type="password" class="form-control" name="password" required>
+++     </div>
+++     <button type="submit" class="btn btn-primary">Submit</button>
+++   </form>
+++ </div>
+```
+
+_[/src/app/models/user.ts](./src/app/models/user.ts)_
+```ts
+export class User {
+	constructor(
+		public id: number,
+		public role: string,
+		public name: string,
+		public surname: string,
+		public email: string,
+		public password: string
+	) { }
+}
 ```
 
 
 
+_[/src/app/components/register.component.ts](./src/app/components/register.component.ts)_
+```diff
+import { Component, OnInit } from '@angular/core';
+++ import { Router, ActivatedRoute, Params } from '@angular/router';
+++ import { User } from '../models/user';
+
+@Component({
+  selector: 'app-register',
+  templateUrl: '../views/register.component.html' 
+})
+export class RegisterComponent implements OnInit {
+  public title: string;
+++ public user: User;  
+
+  constructor(
+  ){
+    this.title = 'Register Component';
+++  this.user = new User(1, "user", "", "", "", "");
+  }
+
+  ngOnInit() {
+    console.log('The register.component has been loaded!!!');    
+  }
+
+++ onSubmit(){
+++   console.log('Data Register Form recibed : ', this.user);
+++ }  
+
+}
+```
 
 
 
+_[/src/app/views/register.component.html](./src/app/views/register.component.html)_
+```diff
+<div class="col-md-12">
+  <h3>{{title}}</h3>
+  <form #registerForm="ngForm" (ngSubmit)="onSubmit()" class="col-md-4 no-padding needs-validation">
+    <div class="form-group">
+      <label for="inputName">Name</label>
+--    <input type="text" class="form-control" name="name" required>
+++    <input type="text" class="form-control" name="name" #name="ngModel" [(ngModel)]="user.name" required>
+++    <span *ngIf="!name.valid && name.touched">The name is not valid!!!</span>
+    </div>
+    <div class="form-group">
+      <label for="inputSurname">Surname</label>
+--    <input type="text" class="form-control" name="surname" required>
+++    <input type="text" class="form-control" name="surname" #surname="ngModel" [(ngModel)]="user.surname" required>
+++    <span *ngIf="!surname.valid && surname.touched">The surname is not valid!!!</span> 
+    </div>    
+    <div class="form-group">
+      <label for="inputEmail">Email address</label>
+--    <input type="email" class="form-control" name="email" required>
+++    <input type="email" class="form-control" name="email" #email="ngModel" [(ngModel)]="user.email" required>
+++    <span *ngIf="!email.valid && email.touched">The email is not valid!!!</span>     
+    </div>
+    <div class="form-group">
+      <label for="inputPassword">Password</label>
+--    <input type="password" class="form-control" name="password" required>
+++    <input type="password" class="form-control" name="password" #password="ngModel" [(ngModel)]="user.password" required>
+++    <span *ngIf="!password.valid && password.touched">The password is not valid!!!</span>  
+    </div>
+--  <input type="submit" class="btn btn-primary">Submit</button>
+++  <input type="submit" value="register" class="btn btn-primary" [disabled]="!registerForm.form.valid"/>
+  </form>
+</div>
+```
 
 
+_[src/app/services/user.service.ts](./src/app/services/user.service.ts)_
+```diff
+import { Injectable } from '@angular/core';
+import { Http, Response, Headers } from '@angular/http';
+import 'rxjs/add/operator/map';
+import { Observable } from '../../../node_modules/rxjs/Observable';
+import { GLOBAL } from './global';
 
+@Injectable()
+export class UserService {
+  public url: string;
+  public identity;
+  public token;
 
+  constructor(private _http: Http) {
+    this.url = GLOBAL.url;
+  }
+  signup(user_to_login) {
+    console.log('Service user started');
+    let json = JSON.stringify(user_to_login);
+    let params = "json=" + json;
+    let headers = new Headers({ 'Content-Type': 'application/x-www-form-urlencoded' });
+    return this._http.post(this.url + '/login', params, { headers: headers })
+      .map(res => res.json());
+  }
+  getIdentity() {
+    let identity = JSON.parse(localStorage.getItem('identity'));
+    this.identity = (identity != "undefined") ? identity : null;
+    return this.identity;
+  }
 
+  getToken() {
+    let token = JSON.parse(localStorage.getItem('token'));
+    this.token = (token != "undefined") ? token : null;
+    return this.token;
+  }
 
+++ register(user_to_register) {
+++  let json = JSON.stringify(user_to_register);
+++  let params = "json=" + json;
+++  let headers = new Headers({ 'Content-Type': 'application/x-www-form-urlencoded' });
 
+++  return this._http.post(this.url + '/user/new', params, { headers: headers })
+++    .map(res => res.json());
+++ }
+
+}
+```
+
+_[/src/app/components/register.component.ts](./src/app/components/register.component.ts)_
+```diff
+import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute, Params } from '@angular/router';
+import { User } from '../models/user';
+++ import {UserService } from '../services/user.service';
+
+@Component({
+  selector: 'app-register',
+-- templateUrl: '../views/register.component.html'
+++ templateUrl: '../views/register.component.html',
+++ providers: [UserService]  
+})
+export class RegisterComponent implements OnInit {
+  public title: string;
+  public user: User;
+++ public status;  
+
+  constructor(
+++ private _userService: UserService    
+  ){
+    this.title = 'Register Component';
+    this.user = new User(1, "user", "", "", "", "");
+  }
+
+  ngOnInit() {
+    console.log('The register.component has been loaded!!!');    
+  }
+
+  onSubmit(){
+    console.log('Data Register Form recibed : ', this.user);
+++  this._userService.register(this.user).subscribe(
+++    response => {
+++      this.status = (response.status != 'success')? 'error' : response.status;
+++    },
+++    error => {
+++      console.log(<any>error);
+++    }
+++  )
+++ } 
+
+}
+```
+
+_[/src/app/views/register.component.html](./src/app/views/register.component.html)_
+```diff
+<div class="col-md-12">
+  <h3>{{title}}</h3>
+++ <div class "alert alert-success" *ngIf="status == 'success'">
+++  You have already logged!!
+++ </div>
+  <form #registerForm="ngForm" (ngSubmit)="onSubmit()" class="col-md-4 no-padding needs-validation">
+    <div class="form-group">
+      <label for="inputName">Name</label>
+      <input type="text" class="form-control" name="name" #name="ngModel" [(ngModel)]="user.name" required>
+      <span *ngIf="!name.valid && name.touched">The name is not valid!!!</span>
+    </div>
+    <div class="form-group">
+      <label for="inputSurname">Surname</label>
+      <input type="text" class="form-control" name="surname" #surname="ngModel" [(ngModel)]="user.surname" required> 
+      <span *ngIf="!surname.valid && surname.touched">The surname is not valid!!!</span> 
+    </div>    
+    <div class="form-group">
+      <label for="inputEmail">Email address</label>
+      <input type="email" class="form-control" name="email" #email="ngModel" [(ngModel)]="user.email" required>
+      <span *ngIf="!email.valid && email.touched">The email is not valid!!!</span>      
+    </div>
+    <div class="form-group">
+      <label for="inputPassword">Password</label>
+      <input type="password" class="form-control" name="password" #password="ngModel" [(ngModel)]="user.password" required>
+      <span *ngIf="!password.valid && password.touched">The password is not valid!!!</span>        
+    </div>
+    <input type="submit" value="register" class="btn btn-primary" [disabled]="!registerForm.form.valid"/>
+  </form>
+</div>
+```
 
 
 

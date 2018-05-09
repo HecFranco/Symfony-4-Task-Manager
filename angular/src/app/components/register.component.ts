@@ -1,33 +1,47 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params, RouterEvent } from '@angular/router';
 
-import { FormBuilder, FormGroup, Validators} from '@angular/forms';
+import { User } from '../models/user';
+import {UserService } from '../services/user.service';
+
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-register',
-  templateUrl: '../views/register.component.html'
+  templateUrl: '../views/register.component.html',
+  providers: [UserService] 
 })
 export class RegisterComponent implements OnInit {
   public title: string;
-  public user;
-  
+  public user: User;
+  public status;
+
   constructor(
     private _route: ActivatedRoute,
-    private _router: Router
-  ){
+    private _router: Router,
+    private _userService: UserService 
+  ) {
     this.title = 'Register Component';
-    this.user = {
-      'name': ['', [Validators.required]],
-      'company': ['', [Validators.required, Validators.minLength(5), Validators.maxLength(10)]],
-      'email': ['', [Validators.required, Validators.email]],
-      'age': ['', [Validators.required]],
-      'url': ['', [Validators.pattern(/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/)]],
-      'password': ['', [Validators.pattern(/^[a-z0-9_-]{6,18}$/)]],
-    }
+    this.user = new User(1, 'user', '', '', '', '');
   }
 
   ngOnInit() {
     console.log('The register.component has been loaded!!!');
+  }
+
+  onSubmit() {
+    console.log('Data Register Form recibed : ', this.user);
+    this._userService.register(this.user).subscribe(
+      response => {
+        this.status = (response.status != 'success')? 'error' : response.status;
+        if(response.status == 'success') { 
+          this.user = new User(1, 'user', '', '', '', ''); 
+        }
+      },
+      error => {
+        console.log(<any>error);
+      }
+    )
   }
 
 }

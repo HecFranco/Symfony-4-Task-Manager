@@ -53,7 +53,7 @@ export class LoginComponent implements OnInit {
                 } {
                   if (!this.identity.status) {
                     localStorage.setItem('token', JSON.stringify(this.token));
-                    window.location.href = "/";
+                    window.location.href = '/';
                   }
                 }
               },
@@ -81,7 +81,7 @@ export class LoginComponent implements OnInit {
   redirectIfIdentity() {
     let identity = this._userService.getIdentity();
     if (identity != null && identity.sub && this._router.url === '/login') {
-      this._router.navigate(["/"]);
+      this._router.navigate(['/']);
     }
   }
 }

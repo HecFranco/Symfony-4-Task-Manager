@@ -45,7 +45,7 @@ class UserController extends Controller {
 					$user->setCreatedAt($createdAt);
 					$user->setRole($role);
 					$user->setEmail($email);
-					$user->setName($name);
+					$user->setUsername($name);
 					$user->setSurname($surname);
 					// Encrypt the password
 					$pwd = hash('sha256', $password);
