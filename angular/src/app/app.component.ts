@@ -16,7 +16,7 @@ export class AppComponent {
     private _userService: UserService
   ) {
     this.identity = this._userService.getIdentity();
-    this.identity = this._userService.getToken();
+    this.token = this._userService.getToken();
   }
 
   ngOnInit() {

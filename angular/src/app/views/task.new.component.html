@@ -1,0 +1,44 @@
+<div class="col-md-12">
+
+	<div class="loader" *ngIf="loading == 'show'">
+		<img src="assets/img/loader.gif" />
+	</div>
+
+	<div class="col-md-12" *ngIf="!loading || task">
+		<h3>{{page_title}}</h3>
+
+		<div class="alert alert-success" *ngIf="status_task == 'success'">
+			The task has been created correctly!
+		</div>
+
+		<div class="alert alert-danger" *ngIf="status_task == 'error'">
+			The task has NOT been created!
+		</div>
+
+		<form #taskNewForm="ngForm" (ngSubmit)="onSubmit()" class="col-md-7 no-padding">
+			<p>
+				<label>Title</label>
+				<input type="text" class="form-control" name="title" #title="ngModel" [(ngModel)]="task.title" required />
+				<span *ngIf="!title.valid && title.touched">
+					The title is not correct !!
+				</span>
+			</p>
+
+			<p>
+				<label>Description</label>
+				<textarea class="form-control" name="description" #description="ngModel" [(ngModel)]="task.description"></textarea>
+			</p>
+
+			<p>
+				<label>State</label>
+				<select class="form-control" name="status" #status="ngModel" [(ngModel)]="task.status">
+					<option value="new">New</option>
+					<option value="todo">To do</option>
+					<option value="finished">Finished</option>
+				</select>
+			</p>
+
+			<input type="submit" value="{{page_title}}" class="btn btn-success" [disabled]="!taskNewForm.form.valid"/>
+		</form>
+	</div>
+</div>

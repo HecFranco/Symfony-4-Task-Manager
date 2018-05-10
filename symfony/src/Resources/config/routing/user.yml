@@ -3,6 +3,6 @@ user_new:
     controller: App\Controller\UserController::new
     methods:   [POST]
 user_edit:
-    path: /edit
+    path: /user/edit
     controller: App\Controller\UserController::edit
     methods:   [POST]

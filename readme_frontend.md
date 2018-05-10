@@ -1701,11 +1701,479 @@ _[/src/app/views/register.component.html](./src/app/views/register.component.htm
 </div>
 ```
 
+--------------------------------------------------------------------------------------------
+
+### 13.Edit User
+
+--------------------------------------------------------------------------------------------
+
+We will generated our **user edit** component using the command `ng generate component user.edit --style scss`.
+
+```bash
+  create src/app/user.edit/user.edit.component.html (28 bytes)
+  create src/app/user.edit/user.edit.component.spec.ts (649 bytes)
+  create src/app/user.edit/user.edit.component.ts (282 bytes)
+  create src/app/user.edit/user.edit.component.scss (0 bytes)
+  update src/app/app.module.ts (942 bytes)
+```
+
+> This command will have generated a folder with the content of the new component within the app called **user.edit**. As we mentioned before, we will have to redistribute that content and reference it in the different files to follow the logical structure of the previously defined project.
+
+* [/src/app/user.edit/user.edit.component.html](./src/app/user.edit/user.edit.component.html) ->
+[/src/app/views/user.edit.component.html](./src/app/views/user.edit.component.html).
+* [/src/app/user.edit/user.edit.component.ts](./src/app/user.edit/user.edit.component.ts) ->
+[/src/app/components/user.edit.component.ts](./src/app/components/user.edit.component.ts).
+* [/src/app/user.edit/user.edit.component.scss](./src/app/user.edit/user.edit.component.scss) -> it's erased.
+* [/src/app/user.edit/user.edit.component.spec.ts](./src/app/user.edit/user.edit.component.spec.ts) -> it's erased.
+
+4. We update [/src/app/app.module.ts](./src/app/app.module.ts) with the new component locations.
+
+_[/src/app/app.module.ts](./src/app/app.module.ts)_
+```diff
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { HttpModule } from '@angular/http';
+
+import { AppRoutingModule } from './app-routing.module';
+import { RouterModule } from '@angular/router';
+
+import { AppComponent } from './app.component';
+
+import { LoginComponent } from './components/login.component';
+import { RegisterComponent } from './components/register.component';
+import { DefaultComponent } from './components/default.component';
+-- import { User } from './user.edit/user.edit.component';
+++ import { UserEditComponent } from './components/user.edit.component';
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    LoginComponent,
+    RegisterComponent,
+    DefaultComponent,
+--  User.EditComponent
+++  UserEditComponent
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule,
+    HttpModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+```
+
+> **Note:** Don't forget to declare the new component inside the decorator `@NgModule` in `declarations: [...]`.
+
+5. In the next step we will modify [/src/app/components/user.edit.component.ts](./src/app/components/user.edit.component.ts). _We will also include the methods that will manage the routing (`import { Router, ActivatedRoute, Params, RouterEvent } from '@angular/router';`)._
 
 
+_[/src/app/components/user.edit.components.ts](./src/app/components/user.edit.components.ts)_
+```diff
+import { Component, OnInit } from '@angular/core';
+++ import { Router, ActivatedRoute, Params, RouterEvent } from '@angular/router';
+
+++ import { User } from '../models/user';
+++ import {UserService } from '../services/user.service';
+
+@Component({
+  selector: 'app-user.edit',
+-- templateUrl: './user.edit.component.html',
+++ templateUrl: '../views/user.edit.component.html',
+-- styleUrls: ['./user.edit.component.scss']
+++ providers: [UserService]
+})
+-- export class User.EditComponent implements OnInit {
+++ export class UserEditComponent implements OnInit {  
+++  public title: string;
+++  public user: User;
+++  public status;
+++  public identity;
+++  public token;
+
+-- constructor() { }
+++ constructor(
+++    private _userService: UserService,
+++    private _route: ActivateRoute,
+++    private _router: Router
+++ ) {
+++    this.title = 'Modify data user';
+++    this.identity = this._userService.getIdentity();
+++    this.token = this._userService.getToken();
+++ }
+
+  ngOnInit() {
+++  if(this.identity == null){
+++    this._router.navigate(['/login']);
+++  }else{
+++    this.user = new User(
+++      this.identity.sub ,
+++      this.identity.role ,
+++      this.identity.name ,
+++      this.identity.surname ,
+++      this.identity.email ,
+++      this.identity.password
+++    )  
+++  }  
+++ }    
+
+}
+```
+
+_[/src/app/app-routing.module.ts](./src/app/app-routing.module.ts)_
+```diff
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+
+import { LoginComponent } from './components/login.component';
+import { DefaultComponent } from './components/default.component';
+import { RegisterComponent } from './components/register.component';
+++ import { UserEditComponent } from './components/user.edit.component';
+
+const routes: Routes = [
+  { path: '', component: DefaultComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'logout', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
+++ { path: 'user-edit', component: UserEditComponent },  
+  { path: '**', component: LoginComponent }
+  ];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+```
+
+_[/src/app/views/user.edit.component.html](./src/app/views/user.edit.component.html)_
+```diff
+-- <p>
+--   user.edit works!
+-- </p>
+++ <div class="col-md-12">
+++ 	<h3>{{title}}</h3>
+
+++ 	<div class="alert alert-success" *ngIf="status == 'success'">
+++ 		Your data has been updated correctly!
+++ 	</div>
+
+++ 	<div class="alert alert-danger" *ngIf="status == 'error'">
+++ 		Your data has not been updated!
+++ 	</div>
+
+++ 	<form #updateForm="ngForm" (ngSubmit)="onSubmit()" class="col-md-7 no-padding">
+++ 		<p>
+++ 			<label>Name</label>
+++ 			<input type="text" class="form-control" name="name" #name="ngModel" [(ngModel)]="user.name" required />
+++ 			<span *ngIf="!name.valid && name.touched">The name is required</span>
+++ 		</p>
+
+++ 		<p>
+++ 			<label>Surname</label>
+++ 			<input type="text" class="form-control" name="surname" #surname="ngModel" [(ngModel)]="user.surname" required />
+++ 			<span *ngIf="!surname.valid && surname.touched">The surnames are required</span>
+++ 		</p>
+
+++ 		<p>
+++ 			<label>Email</label>
+++ 			<input type="text" class="form-control" name="email" #email="ngModel" [(ngModel)]="user.email" required />
+++ 			<span *ngIf="!email.valid && email.touched">The email is required</span>
+++ 		</p>
+
+++ 		<p>
+++ 			<label>Password</label>
+++ 			<input type="password" class="form-control" name="password" #password="ngModel" [(ngModel)]="user.password" />
+++ 			<span *ngIf="!password.valid && password.touched">The password is required</span>
+++ 		</p>
+
+++ 		<input type="submit" class="btn btn-warning" value="{{title}}" [disabled]="!updateForm.form.valid" />
+++ 	</form>
+++ </div>
+```
 
 
+_[/src/app/components/user.edit.components.ts](./src/app/components/user.edit.components.ts)_
+```diff
+import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute, Params, RouterEvent } from '@angular/router';
 
+import { User } from '../models/user';
+import {UserService } from '../services/user.service';
 
+@Component({
+  selector: 'app-user.edit',
+  templateUrl: '../views/user.edit.component.html',
+  providers: [UserService]
+})
+export class UserEditComponent implements OnInit {  
+  //..
+
+  constructor(
+    //..
+  }
+
+  ngOnInit() {
+    //..
+  }
+
+++ onSubmit() {
+++   console.log(this.user);
+
+++   this._userService.update_user(this.user).subscribe(
+++     response => {
+++       this.status = response.status;
+
+++       if (this.status != 'success') {
+++         this.status = 'error';
+++       } else {
+++         localStorage.setItem('identity', JSON.stringify(this.user));
+++       }
+++     },
+++     error => {
+++       console.log(<any>error);
+++     }
+++   );
+++ }
+
+}
+```
+
+_[src/app/services/user.service.ts](./src/app/services/user.service.ts)_
+```diff
+import { Injectable } from '@angular/core';
+import { Http, Response, Headers } from '@angular/http';
+import 'rxjs/add/operator/map';
+import { Observable } from '../../../node_modules/rxjs/Observable';
+import { GLOBAL } from './global';
+
+@Injectable()
+export class UserService {
+  //..
+
+  constructor(private _http: Http) {
+    this.url = GLOBAL.url;
+  }
+
+  signup(user_to_login) {
+    //..
+  }
+
+  getIdentity() {
+    //..
+  }
+
+  getToken() {
+    //..
+  }
+
+  register(user_to_register) {
+    //..
+  }
+
+++ update_user(user_to_update) {
+++   let json = JSON.stringify(user_to_update);
+++   let params = "json=" + json + '&authorization=' + this.getToken();
+++   let headers = new Headers({ 'Content-Type': 'application/x-www-form-urlencoded' });
+
+++   return this._http.post(this.url + '/user/edit', params, { headers: headers })
+++     .map(res => res.json());
+++ }
+
+}
+```
+
+--------------------------------------------------------------------------------------------
+
+### 14.Create Task
+
+--------------------------------------------------------------------------------------------
+
+We will generated our first component using the command `ng generate component task.new --style scss`.
+
+```bash
+  create src/app/task.new/task.new.component.html (27 bytes)
+  create src/app/task.new/task.new.component.spec.ts (642 bytes)
+  create src/app/task.new/task.new.component.ts (278 bytes)
+  create src/app/task.new/task.new.component.scss (0 bytes)
+  update src/app/app.module.ts (1034 bytes)
+```
+
+> This command will have generated a folder with the content of the new component within the app called **task.new**. As we mentioned before, we will have to redistribute that content and reference it in the different files to follow the logical structure of the previously defined project.
+
+* [/src/app/task.new/task.new.component.html](./src/app/task.new/task.new.component.html) ->
+[/src/app/views/task.new.component.html](./src/app/views/task.new.component.html).
+* [/src/app/task.new/task.new.component.ts](./src/app/task.new/task.new.component.ts) ->
+[/src/app/components/task.new.component.ts](./src/app/components/task.new.component.ts).
+* [/src/app/task.newt/task.new.component.scss](./src/app/task.new/task.new.component.scss) -> it's erased.
+* [/src/app/task.new/task.new.component.spec.ts](./src/app/task.new/task.new.component.spec.ts) -> it's erased.
+
+4. We update [/src/app/app.module.ts](./src/app/app.module.ts) with the new component locations.
+
+_[/src/app/app.module.ts](./src/app/app.module.ts)_
+```diff
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { HttpModule } from '@angular/http';
+
+import { AppRoutingModule } from './app-routing.module';
+import { RouterModule } from '@angular/router';
+
+import { AppComponent } from './app.component';
+
+import { LoginComponent } from './components/login.component';
+import { RegisterComponent } from './components/register.component';
+import { DefaultComponent } from './components/default.component';
+import { UserEditComponent } from './components/user.edit.component';
+-- import { Task } from './task.new/task.new.component';
+++ import { TaskNewComponent } from './components/task.new.component';
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    LoginComponent,
+    RegisterComponent,
+    DefaultComponent,
+    UserEditComponent,
+--  Task.NewComponent
+++  TaskNewComponent
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule,
+    HttpModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+```
+
+> **Note:** Don't forget to declare the new component inside the decorator `@NgModule` in `declarations: [...]`.
+
+5. In the next step we will modify [/src/app/components/task.new.component.ts](./src/app/components/task.new.component.ts). _We will also include the methods that will manage the routing (`import { Router, ActivatedRoute, Params, RouterEvent } from '@angular/router';`)._
+
+_[/src/app/task.new/task.new.component.ts](./src/app/task.new/task.new.component.ts)_
+```diff
+import { Component, OnInit } from '@angular/core';
+++ import { Router, ActivatedRoute, Params, RouterEvent } from '@angular/router';
+
+++ import { UserService } from '../services/user.service';
+
+@Component({
+  selector: 'app-task.new',
+-- templateUrl: './task.new.component.html',
+++ templateUrl: '../views/task.new.component.html',
+-- styleUrls: ['./task.new.component.scss']
+})
+-- export class Task.NewComponent implements OnInit {
+++ export class TaskNewComponent implements OnInit {  
+++  public title: string;
+++  public identity;
+
+--  constructor() { }
+++  constructor(
+++    private _userService: UserService,
+++    private _route: ActivatedRoute,
+++    private _router: Router
+++  ) {
+++    this.title = 'Create New Task';
+++    this.identity = this._userService.getIdentity();
+++  }
+
+  ngOnInit() {
+++  if(this.identity == null && !this.identity.sub){
+++    this._router.navigate(['/login']);
+++  }else{
+++  }  
+  }  
+
+}
+```
+
+_[/src/app/app-routing.module.ts](./src/app/app-routing.module.ts)_
+```diff
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+
+import { LoginComponent } from './components/login.component';
+import { DefaultComponent } from './components/default.component';
+import { RegisterComponent } from './components/register.component';
+import { UserEditComponent } from './components/user.edit.component';
+++ import { TaskNewComponent } from './components/task.new.component';
+
+const routes: Routes = [
+  { path: '', component: DefaultComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'logout', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
+  { path: 'user-edit', component: UserEditComponent },
+++ { path: 'new-task', component: TaskNewComponent },
+  { path: '**', component: LoginComponent }
+  ];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+```
+
+_[/src/app/views/task.new.component.html](./src/app/views/task.new.component.html)_
+```diff
+-- <p>
+--   task.new works!
+-- </p>
+++ <div class="col-md-12">
+
+++ <div class="loader" *ngIf="loading == 'show'">
+++ 	<img src="assets/img/loader.gif" />
+++ </div>
+
+++ <div class="col-md-12" *ngIf="!loading || task">
+++ 	<h3>{{title}}</h3>
+
+++ 	<div class="alert alert-success" *ngIf="status_task == 'success'">
+++ 		The task has been created correctly!
+++ 	</div>
+
+++ 	<div class="alert alert-danger" *ngIf="status_task == 'error'">
+++ 		The task has NOT been created!
+++ 	</div>
+
+++ 	<form #taskNewForm="ngForm" (ngSubmit)="onSubmit()" class="col-md-7 no-padding">
+++ 		<p>
+++ 			<label>Title</label>
+++ 			<input type="text" class="form-control" name="title" #title="ngModel" [(ngModel)]="task.title" required />
+++ 			<span *ngIf="!title.valid && title.touched">
+++ 				The title is not correct !!
+++ 			</span>
+++ 		</p>
+
+++ 		<p>
+++ 			<label>Description</label>
+++ 			<textarea class="form-control" name="description" #description="ngModel" [(ngModel)]="task.description"></textarea>
+++ 		</p>
+
+++ 		<p>
+++ 			<label>State</label>
+++ 			<select class="form-control" name="status" #status="ngModel" [(ngModel)]="task.status">
+++ 				<option value="new">New</option>
+++ 				<option value="todo">To do</option>
+++ 				<option value="finished">Finished</option>
+++ 			</select>
+++ 		</p>
+
+++ 		<input type="submit" value="{{title}}" class="btn btn-success" [disabled]="!taskNewForm.form.valid"/>
+++ 	</form>
+++ </div>
+++ </div>
+```
 
 ( Source: [https://blog.ng-classroom.com/blog/ionic2/validations-in-forms/](https://blog.ng-classroom.com/blog/ionic2/validations-in-forms/) )

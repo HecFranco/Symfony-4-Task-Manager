@@ -1,0 +1,46 @@
+<div class="col-md-12">
+
+	<div class="loader" *ngIf="loading == 'show'">
+		<img src="assets/img/loader.gif" />
+	</div>
+	
+	<div class="col-md-12" *ngIf="task">
+		<h3>{{task.title}}</h3>
+		<hr/>
+		<div class="panel panel-default task-data">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					Tarea creada por <strong>{{task.user.name + ' ' + task.user.surname}}</strong> el {{task.createdAt.timestamp | generateDate}}
+				</h3>
+			</div>
+			<div class="panel-body">
+				{{task.description}}
+			</div>
+		</div>
+		
+
+		<!-- Button HTML (to Trigger Modal) -->
+		<a href="#myModal" role="button" class="btn btn-large btn-danger" data-toggle="modal">Borrar</a>
+		 
+		<!-- Modal HTML -->
+		<div id="myModal" class="modal fade">
+		    <div class="modal-dialog">
+		        <div class="modal-content">
+		            <div class="modal-header">
+		                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		                <h4 class="modal-title">¿Estas seguro?</h4>
+		            </div>
+		            <div class="modal-body">
+		                <p class="text-warning">Vas a eliminar permanentemente la tarea, no podrás recuperarla, ¿estas seguro?.</p>
+		            </div>
+		            <div class="modal-footer">
+		                <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+		                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="deleteTask(task.id)">Si, quiero borrarla</button>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+
+
+	</div>
+</div>
