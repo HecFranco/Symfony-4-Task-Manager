@@ -12,9 +12,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class User implements UserInterface {
     private $id;
 		public function getId() { return $this->id; } 
-    private $username;
-    public function getUsername() { return $this->username; }
-    public function setUsername($username) { $this->username = $username; } 		 	
+    private $name;
+		public function getUsername() { return $this->name; }
+		public function getName() { return $this->name; }
+    public function setName($name) { $this->name = $name; } 		 	
 		private $surname;
     public function setSurname($surname) { $this->surname = $surname; return $this; }
     public function getSurname() { return $this->surname; }		

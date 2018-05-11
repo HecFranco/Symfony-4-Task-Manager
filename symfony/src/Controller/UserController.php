@@ -45,7 +45,7 @@ class UserController extends Controller {
 					$user->setCreatedAt($createdAt);
 					$user->setRole($role);
 					$user->setEmail($email);
-					$user->setUsername($name);
+					$user->setName($name);
 					$user->setSurname($surname);
 					// Encrypt the password
 					$pwd = hash('sha256', $password);
@@ -113,7 +113,7 @@ class UserController extends Controller {
 							//$user->setCreatedAt($createdAt);
 							$user->setRole($role);
 							$user->setEmail($email);
-							$user->setUsername($name);
+							$user->setName($name);
 							$user->setSurname($surname);
 							// Encrypt the password
 							if($password != null){

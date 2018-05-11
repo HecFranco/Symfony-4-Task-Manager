@@ -7,7 +7,7 @@ import { Task } from '../models/task';
 
 @Component({
   selector: 'app-task-edit',
-  templateUrl: '../views/task.edit.component.html',
+  templateUrl: '../views/task.new.component.html',
   providers: [UserService, TaskService]
 })
 export class TaskEditComponent implements OnInit {

@@ -4,7 +4,7 @@ task_new:
     methods:   [POST]
 task_edit:
     path: /task/edit/{id}
-    controller: App\Controller\TaskController::edit
+    controller: App\Controller\TaskController::new
     defaults:
         id: null    
     methods:   [POST]
